@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>SMED Attendance System</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+    <!-- ================================= -->
+    <!-- MAIN ATTENDANCE SCREEN -->
+    <!-- ================================= -->
+
+    <h1>SMED – SOCIETY OF MATHEMATICS EDUCATORS</h1>
+
+    <h2>Attendance System</h2>
+
+
+    <div class="attendance-section">
+
+        <h3>📷 Scan Student QR Code</h3>
+
+        <p id="message">
+            Ready to scan.
+        </p>
+
+
+        <button id="scanButton">
+            Scan QR Code
+        </button>
+
+
+        <!-- CAMERA SCANNER -->
+
+        <div id="scanner"></div>
+
+
+        <!-- SCANNED STUDENT RESULT -->
+
+        <div id="studentCard"></div>
+
+    </div>
+
+
+
+    <!-- ================================= -->
+    <!-- REGISTER STUDENT -->
+    <!-- ================================= -->
+
+    <details class="registration-section">
+
+        <summary>
+            ⚙️ Register Student
+        </summary>
+
+
+        <div class="registration-form">
+
+            <h3>Student Registration</h3>
+
+
+            <label>
+                Student Name
+            </label>
+
+            <input
+                type="text"
+                id="studentName"
+            >
+
+
+            <label>
+                Student ID
+            </label>
+
+            <input
+                type="text"
+                id="studentID"
+            >
+
+
+            <label>
+                Set & Year
+            </label>
+
+            <input
+                type="text"
+                id="setYear"
+            >
+
+
+            <label>
+                Profile Picture
+            </label>
+
+            <input
+                type="file"
+                id="studentPicture"
+                accept="image/*"
+            >
+
+
+            <!-- PICTURE PREVIEW -->
+
+            <img
+                id="preview"
+                width="150"
+                alt="Profile Preview"
+            >
+
+
+            <button id="registerButton">
+                Register Student
+            </button>
+
+
+            <!-- GENERATED QR -->
+
+            <div id="qrCode"></div>
+
+        </div>
+
+    </details>
+
+
+
+    <!-- ================================= -->
+    <!-- QR CODE LIBRARIES -->
+    <!-- ================================= -->
+
+   <!-- QR CODE -->
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+<!-- QR SCANNER -->
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-app-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-auth-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore-compat.js"></script>
+
+<!-- OUR JAVASCRIPT -->
+<script src="script.js"></script>
+
+</body>
+
+</html>
