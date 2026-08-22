@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>SMED Attendance Dashboard</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f1e8;
+            margin: 0;
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .cards {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            width: 200px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            margin: 0;
+            font-size: 35px;
+        }
+
+        .card p {
+            color: #666;
+        }
+
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        input,
+        button {
+            padding: 10px;
+            margin: 5px;
+            border-radius: 8px;
+            border: 1px solid #aaa;
+        }
+
+        button {
+            cursor: pointer;
+            background: #e8d7b5;
+        }
+
+        .table-container {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #eee;
+        }
+
+        .present {
+            font-weight: bold;
+        }
+
+        #loading {
+            text-align: center;
+            padding: 20px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <h1>
+        SMED Attendance Dashboard
+    </h1>
+
+    <p class="subtitle">
+        Society of Mathematics Educators
+    </p>
+
+
+    <!-- ========================= -->
+    <!-- SUMMARY CARDS -->
+    <!-- ========================= -->
+
+    <div class="cards">
+
+        <div class="card">
+
+            <h2 id="totalStudents">
+                0
+            </h2>
+
+            <p>
+                Total Students
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h2 id="presentToday">
+                0
+            </h2>
+
+            <p>
+                Present Today
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h2 id="absentToday">
+                0
+            </h2>
+
+            <p>
+                Absent Today
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h2 id="attendanceRate">
+                0%
+            </h2>
+
+            <p>
+                Attendance Rate
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ========================= -->
+    <!-- DATE FILTER -->
+    <!-- ========================= -->
+
+    <div class="controls">
+
+        <label>
+            Select Date:
+        </label>
+
+        <input
+            type="date"
+            id="dateFilter"
+        >
+
+        <button id="refreshButton">
+            Refresh
+        </button>
+
+    </div>
+
+
+
+    <!-- ========================= -->
+    <!-- ATTENDANCE TABLE -->
+    <!-- ========================= -->
+
+    <div class="table-container">
+
+        <div id="loading">
+            Loading attendance...
+        </div>
+
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Name
+                    </th>
+
+                    <th>
+                        Student ID
+                    </th>
+
+                    <th>
+                        Set & Year
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                    <th>
+                        Date
+                    </th>
+
+                    <th>
+                        Time
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="attendanceTable">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+
+    <!-- ========================= -->
+    <!-- FIREBASE -->
+    <!-- ========================= -->
+
+    <script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-app-compat.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-auth-compat.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore-compat.js"></script>
+
+
+    <!-- DASHBOARD JAVASCRIPT -->
+
+    <script src="dashboard.js"></script>
+
+
+</body>
+
+</html>
