@@ -1,14 +1,12 @@
-// =================================
-// FIREBASE CONNECTION
-// =================================
-
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "AIzaSyC9PvfAHE-Eacy4q2LIa25oC0bxHJ9EQOA",
-    authDomain: "smed-attendance-system.firebaseapp.com",
-    projectId: "smed-attendance-system",
-    storageBucket: "smed-attendance-system.firebasestorage.app",
-    messagingSenderId: "318678155548",
-    appId: "1:318678155548:web:d99b2d6a2b4963fa06fad9"
+  apiKey: "AIzaSyC9PvfAHE-Eacy4q2LIa25oC0bxHJ9EQOA",
+  authDomain: "smed-attendance-system.firebaseapp.com",
+  projectId: "smed-attendance-system",
+  storageBucket: "smed-attendance-system.firebasestorage.app",
+  messagingSenderId: "318678155548",
+  appId: "1:318678155548:web:5f980fb67de3683406fad9",
+  measurementId: "G-C4H5BSNSHZ"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -200,255 +198,258 @@ authReady.then(function () {
 // SCAN QR CODE
 // ========================================
 
-scanButton.addEventListener("click", function () {
+// ========================================
+// SCAN QR CODE
+// ========================================
+
+scanButton.addEventListener("click", async function () {
 
     message.textContent = "Opening camera...";
 
-
-    // Create QR scanner
-
     const scanner = new Html5Qrcode("scanner");
 
+    try {
 
-    scanner.start(
+        await scanner.start(
 
-        {
-            facingMode: "environment"
-        },
+            {
+                facingMode: "environment"
+            },
 
-        {
-            fps: 10,
-            qrbox: 250
-        },
+            {
+                fps: 10,
+                qrbox: {
+                    width: 250,
+                    height: 250
+                }
+            },
 
+            async function (decodedText) {
 
-        // =================================
-        // QR CODE SUCCESSFULLY SCANNED
-        // =================================
-
-        function (decodedText) {
-
-            message.textContent =
-                "QR Code scanned!";
-
-
-  
-// Find student in Firebase using QR / Student ID
-
-db.collection("students")
-    .doc(String(decodedText).trim())
-    .get()
-    .then(function(doc) {
-
-        // Stop camera
-        scanner.stop().then(function() {
-
-            if (doc.exists) {
-
-                // Get student from Firebase
-                const student = doc.data();
-
-                // Show student information
-                studentCard.innerHTML = `
-                    <img
-                        src="${student.photo}"
-                        width="250"
-                    >
-
-                    <h3>${student.name}</h3>
-
-                    <p>
-                        Student ID:
-                        ${student.id}
-                    </p>
-
-                    <p>
-                        Set & Year:
-                        ${student.setYear}
-                    </p>
-
-                    <h3>✅ PRESENT</h3>
-                `;
-
-                // Create attendance record
-                const now = new Date();
-
-                const record = {
-                    name: student.name,
-                    id: student.id,
-                    setYear: student.setYear,
-                    status: "PRESENT",
-                    date: now.toLocaleDateString(),
-                    time: now.toLocaleTimeString()
-                };
-
-                // Save attendance locally for now
-                attendance.push(record);
-
-                localStorage.setItem(
-                    "attendance",
-                    JSON.stringify(attendance)
+                console.log(
+                    "QR CODE DETECTED:",
+                    decodedText
                 );
 
                 message.textContent =
-                    "Attendance recorded for " +
-                    student.name;
-
-            } else {
-
-                studentCard.innerHTML = `
-                    <h3>Student Not Found</h3>
-
-                    <p>
-                        Scanned ID:
-                        ${decodedText}
-                    </p>
-                `;
-
-                message.textContent =
-                    "Student is not registered.";
-
-            }
-
-        });
-
-    })
-    .catch(function(error) {
-
-        console.error(
-            "Firestore error:",
-            error
-        );
-
-        message.textContent =
-            "Error connecting to Firebase.";
-
-    });
+                    "QR Code detected!";
 
 
-            // Stop camera
+                // STOP CAMERA
+                try {
 
-            scanner.stop().then(function () {
+                    await scanner.stop();
 
+                } catch (error) {
 
-                // =================================
-                // STUDENT FOUND
-                // =================================
+                    console.log(
+                        "Scanner already stopped."
+                    );
 
-                if (student) {
-
-
-                    // Show student's information
-
-                    studentCard.innerHTML = `
-
-                        <img
-                            src="${student.photo}"
-                            width="250"
-                        >
-
-                        <h3>${student.name}</h3>
-
-                        <p>
-                            Student ID:
-                            ${student.id}
-                        </p>
-
-                        <p>
-                            Set & Year:
-                            ${student.setYear}
-                        </p>
-
-                        <h3>✅ PRESENT</h3>
-
-                    `;
+                }
 
 
-                    // =================================
-                    // CREATE ATTENDANCE RECORD
-                    // =================================
+                // ====================================
+                // FIND STUDENT
+                // ====================================
 
-                    const now = new Date();
+                try {
 
-
-                    const record = {
-
-                        name: student.name,
-
-                        id: student.id,
-
-                        setYear: student.setYear,
-
-                        status: "PRESENT",
-
-                        date: now.toLocaleDateString(),
-
-                        time: now.toLocaleTimeString()
-
-                    };
+                    const doc =
+                        await db
+                            .collection("students")
+                            .doc(
+                                String(decodedText).trim()
+                            )
+                            .get();
 
 
-                    // Add attendance record
+                    // ====================================
+                    // STUDENT FOUND
+                    // ====================================
 
-                    attendance.push(record);
+                    if (doc.exists) {
+
+                        const student =
+                            doc.data();
 
 
-                    // Save attendance
+                        console.log(
+                            "STUDENT FOUND:",
+                            student
+                        );
 
-                    localStorage.setItem(
-                        "attendance",
-                        JSON.stringify(attendance)
+
+                        // ====================================
+                        // SHOW STUDENT
+                        // ====================================
+
+                        studentCard.innerHTML = `
+
+                            <img
+                                src="${student.photo || ""}"
+                                width="250"
+                            >
+
+                            <h3>
+                                ${student.name}
+                            </h3>
+
+                            <p>
+                                Student ID:
+                                ${student.id}
+                            </p>
+
+                            <p>
+                                Set & Year:
+                                ${student.setYear}
+                            </p>
+
+                            <h3>
+                                ✅ PRESENT
+                            </h3>
+
+                        `;
+
+
+                        // ====================================
+                        // DATE AND TIME
+                        // ====================================
+
+                        const now =
+                            new Date();
+
+                        const date =
+                            now.toLocaleDateString(
+                                "en-PH"
+                            );
+
+                        const time =
+                            now.toLocaleTimeString(
+                                "en-PH"
+                            );
+
+
+                        // ====================================
+                        // SAVE ATTENDANCE
+                        // ====================================
+
+                        await authReady;
+
+
+                        await db
+                            .collection("attendance")
+                            .add({
+
+                                name:
+                                    student.name,
+
+                                id:
+                                    student.id,
+
+                                setYear:
+                                    student.setYear,
+
+                                status:
+                                    "PRESENT",
+
+                                date:
+                                    date,
+
+                                time:
+                                    time,
+
+                                timestamp:
+                                    firebase.firestore
+                                        .FieldValue
+                                        .serverTimestamp()
+
+                            });
+
+
+                        console.log(
+                            "ATTENDANCE SAVED:",
+                            student.name
+                        );
+
+
+                        message.textContent =
+                            "Attendance recorded for " +
+                            student.name;
+
+                    }
+
+
+                    // ====================================
+                    // STUDENT NOT FOUND
+                    // ====================================
+
+                    else {
+
+                        console.log(
+                            "STUDENT NOT FOUND:",
+                            decodedText
+                        );
+
+
+                        studentCard.innerHTML = `
+
+                            <h3>
+                                ❌ Student Not Found
+                            </h3>
+
+                            <p>
+                                Scanned ID:
+                                ${decodedText}
+                            </p>
+
+                        `;
+
+
+                        message.textContent =
+                            "Student is not registered.";
+
+                    }
+
+                }
+
+                catch (error) {
+
+                    console.error(
+                        "FIRESTORE ERROR:",
+                        error
                     );
 
 
-                    // Show success message
-
                     message.textContent =
-                        "Attendance recorded for " +
-                        student.name;
+                        "Error connecting to Firebase.";
 
                 }
 
-
-                // =================================
-                // STUDENT NOT FOUND
-                // =================================
-
-                else {
-
-                    studentCard.innerHTML = `
-
-                        <h3>Student Not Found</h3>
-
-                        <p>
-                            Scanned ID:
-                            ${decodedText}
-                        </p>
-
-                    `;
+            },
 
 
-                    message.textContent =
-                        "Student is not registered.";
+            function (errorMessage) {
 
-                }
+                // Ignore normal scanner messages
 
-            });
+            }
 
-        },
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "CAMERA ERROR:",
+            error
+        );
 
 
-        // =================================
-        // SCANNER IS STILL SEARCHING
-        // =================================
+        message.textContent =
+            "Camera could not start.";
 
-        function (errorMessage) {
-
-            // Do nothing.
-            // The camera continues scanning.
-
-        }
-
-    );
+    }
 
 });
